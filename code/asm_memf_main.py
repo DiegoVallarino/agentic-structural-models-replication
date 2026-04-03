@@ -1298,5 +1298,48 @@ def train_memf_v7(
 
     return df_episode, df_agent, df_period, firms, households, banks, government, central_bank, ext_env, G
 
-if __name__ == "__main__":
-    print("This module contains the core model. Use run_baseline.py to execute.")
+
+def run_full_analysis(df_episode, df_agent, df_period, firms, G):
+
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import numpy as np
+    import os
+
+    os.makedirs("results", exist_ok=True)
+    os.makedirs("figures", exist_ok=True)
+
+    print("\n================ BLOCK AVERAGES ================\n")
+
+    df_episode["episode_block"] = pd.cut(
+        df_episode["episode"],
+        bins=[0,10,20,30,40,50,60,70,80],
+        labels=["1-10","11-20","21-30","31-40","41-50","51-60","61-70","71-80"]
+    )
+
+    table_blocks = df_episode.groupby("episode_block").mean(numeric_only=True)
+
+    print(table_blocks)
+
+    table_blocks.to_csv("results/table_block_averages.csv")
+
+    # ---------------- FIGURE: LEARNING ----------------
+    plt.figure(figsize=(8,5))
+
+    entropy = df_episode["action_entropy"]
+    drift = df_episode["policy_drift"]
+    distance = df_episode["mean_policy_distance"]
+
+    plt.plot(df_episode["episode"], entropy/(entropy.max()+1e-8), label="Entropy")
+    plt.plot(df_episode["episode"], drift/(drift.max()+1e-8), label="Policy drift")
+    plt.plot(df_episode["episode"], distance/(distance.max()+1e-8), label="Policy distance")
+
+    plt.legend()
+    plt.title("Learning Convergence Dynamics")
+    plt.grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig("figures/fig1_learning.png", dpi=300)
+    plt.close()
+
+    print("Full analysis completed.")
