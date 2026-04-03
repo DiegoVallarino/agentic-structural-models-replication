@@ -1299,4 +1299,4 @@ def train_memf_v7(
     return df_episode, df_agent, df_period, firms, households, banks, government, central_bank, ext_env, G
 
 if __name__ == "__main__":
-    main()
+    print("This module contains the core model. Use run_baseline.py to execute.")
