@@ -1799,3 +1799,99 @@ plt.grid(axis='y', alpha=0.3)
 
 plt.tight_layout()
 plt.show()
+
+
+# ============================================================
+# MAIN EXECUTION BLOCK (REPLICATION ENTRY POINT)
+# ============================================================
+
+import os
+
+def main():
+
+    print("\n========================================")
+    print("Running ASM-MEMF Simulation")
+    print("========================================\n")
+
+    # --------------------------------------------------------
+    # 1. Ensure output folders exist
+    # --------------------------------------------------------
+    os.makedirs("results", exist_ok=True)
+    os.makedirs("figures", exist_ok=True)
+
+    # --------------------------------------------------------
+    # 2. Run simulation
+    # --------------------------------------------------------
+    try:
+        print("Step 1: Running simulation...\n")
+
+        # ⚠️ Ajusta este nombre si tu función principal se llama distinto
+        df_episode, df_agent, df_period = train_memf_v7()
+
+        print("Simulation completed.\n")
+
+    except Exception as e:
+        print("ERROR during simulation:")
+        print(e)
+        return
+
+    # --------------------------------------------------------
+    # 3. Save results
+    # --------------------------------------------------------
+    try:
+        print("Step 2: Saving results...\n")
+
+        if df_episode is not None:
+            df_episode.to_csv("results/episode_results.csv", index=False)
+
+        if df_agent is not None:
+            df_agent.to_csv("results/agent_results.csv", index=False)
+
+        if df_period is not None:
+            df_period.to_csv("results/period_results.csv", index=False)
+
+        print("Results saved in /results\n")
+
+    except Exception as e:
+        print("ERROR saving results:")
+        print(e)
+
+    # --------------------------------------------------------
+    # 4. Generate figures (if functions exist)
+    # --------------------------------------------------------
+    try:
+        print("Step 3: Generating figures...\n")
+
+        # ⚠️ Ajusta estos nombres según tu código real
+        if 'plot_learning_dynamics' in globals():
+            plot_learning_dynamics(df_episode)
+            print("Saved learning dynamics figure")
+
+        if 'plot_network_snapshot' in globals():
+            plot_network_snapshot()
+            print("Saved network snapshot")
+
+        if 'plot_counterfactuals' in globals():
+            plot_counterfactuals()
+            print("Saved counterfactual comparison")
+
+        print("Figures saved in /figures\n")
+
+    except Exception as e:
+        print("WARNING: Error generating figures:")
+        print(e)
+
+    # --------------------------------------------------------
+    # 5. Finish
+    # --------------------------------------------------------
+    print("========================================")
+    print("RUN COMPLETED SUCCESSFULLY")
+    print("========================================\n")
+
+
+# ============================================================
+# RUN SCRIPT
+# ============================================================
+
+if __name__ == "__main__":
+    main()
