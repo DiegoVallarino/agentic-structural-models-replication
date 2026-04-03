@@ -1555,7 +1555,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-save_path = r"C:\Users\diego\OneDrive\Escritorio\Figures"
+save_path = "figures"
+os.makedirs(save_path, exist_ok=True)
 
 # ============================================================
 # FIGURE 1 — LEARNING CONVERGENCE
